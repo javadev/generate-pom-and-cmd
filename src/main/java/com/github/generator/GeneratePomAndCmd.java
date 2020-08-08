@@ -156,10 +156,10 @@ public class GeneratePomAndCmd {
 "        </dependency>\n";
         StringBuilder result = new StringBuilder();
         foundFiles.forEach((file) -> {
-            result.append(U.format(pomBlock, file.getName().replace(".jar", "")));
+            result.append(U.format(pomBlock, file.getName().replace(".jar", "").replace(".", "-").toLowerCase()));
         });
         String resultPom = U.format(POM_TEMPLATE, result.toString());
-        Files.write(Paths.get("pom.xml"), resultPom.getBytes(StandardCharsets.UTF_8), new java.nio.file.OpenOption[0]);
+        Files.write(Paths.get("generated-pom.xml"), resultPom.getBytes(StandardCharsets.UTF_8), new java.nio.file.OpenOption[0]);
         
     }
 }
