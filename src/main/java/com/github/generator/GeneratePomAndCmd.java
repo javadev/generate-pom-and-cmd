@@ -85,8 +85,8 @@ public class GeneratePomAndCmd {
 "        </dependency>\n" +
 "    </dependencies>\n" +
 "</project>";
-    private static final String CMD_TEMPLATE = "start /wait mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file"
-            + " -Dfile=lib/{} -DgroupId=com.oracle -DartifactId={} -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true\n";
+    private static final String CMD_TEMPLATE = "call mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file"
+            + " -Dfile={0} -DgroupId=com.oracle -DartifactId={1} -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true\n";
 
     private static void fillFilesRecursively(Path directory, final String fileMask, final List<File> resultFiles)
             throws IOException {
@@ -160,6 +160,10 @@ public class GeneratePomAndCmd {
         });
         String resultPom = U.format(POM_TEMPLATE, result.toString());
         Files.write(Paths.get("generated-pom.xml"), resultPom.getBytes(StandardCharsets.UTF_8), new java.nio.file.OpenOption[0]);
-        
+        StringBuilder resultCmd = new StringBuilder();
+        foundFiles.forEach((file) -> {
+            resultCmd.append(java.text.MessageFormat.format(CMD_TEMPLATE, file.getAbsolutePath().replace("\\", "/"), file.getName().replace(".jar", "").replace(".", "-").toLowerCase()));
+        });        
+        Files.write(Paths.get("install-jars.cmd"), resultCmd.toString().getBytes(StandardCharsets.UTF_8), new java.nio.file.OpenOption[0]);
     }
 }
